@@ -1,4 +1,5 @@
 import React,{useState, useEffect} from 'react';
+import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -7,6 +8,11 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 const useStyles = makeStyles({
   table: {
@@ -14,21 +20,35 @@ const useStyles = makeStyles({
   },
 });
 
-function createData(title, calories, fat, carbs, protein) {
-  return { title, calories, fat, carbs, protein };
-}
+// function createData(title, calories, fat, carbs, protein) {
+//   return { title, calories, fat, carbs, protein };
+// }
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
+// const rows = [
+//   createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+//   createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+//   createData('Eclair', 262, 16.0, 24, 6.0),
+//   createData('Cupcake', 305, 3.7, 67, 4.3),
+//   createData('Gingerbread', 356, 16.0, 49, 3.9),
+// ];
 
 export default function BasicTable() {
   const classes = useStyles();
   const [apiData, setApiData] = useState([])
+  const [jsonDataForTheElement, setjsonDataForTheElement] = useState({})
+
+  const [open, setOpen] = React.useState(false);
+  
+
+  const handleClickOpen = (e) => {
+    
+    setjsonDataForTheElement(JSON.stringify(apiData[e]))
+    setOpen(true,e);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   function getData(){
     fetch('https://hn.algolia.com/api/v1/search_by_date?tags=story&page=0')
@@ -61,7 +81,7 @@ export default function BasicTable() {
     getData()
   }, 10000); }, [])
   return (
-    
+  <>
     <TableContainer component={Paper}>
       
   
@@ -69,28 +89,51 @@ export default function BasicTable() {
         <TableHead>
           <TableRow>
           
-            <TableCell align="right">Title</TableCell>
-            <TableCell align="right">URL &nbsp;</TableCell>
-            <TableCell align="right">Created at&nbsp;</TableCell>
-            <TableCell align="right">Author&nbsp;</TableCell>
+            <TableCell align="center">Title</TableCell>
+            <TableCell align="center">URL &nbsp;</TableCell>
+            <TableCell align="center">Created at&nbsp;</TableCell>
+            <TableCell align="center">Author&nbsp;</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           
-          {apiData.map((row) => (
-            <TableRow key={row.url+"yo"+row.created_at}>
+          {apiData.map((row,index) => (
+            <TableRow key={row.url+"yo"+row.created_at} onClick={e=>handleClickOpen(index)}>
               <TableCell component="th" scope="row">
                 {row.title}
               </TableCell>
-              <TableCell align="right"><a href={row.title}>{row.url}</a></TableCell>
-              <TableCell align="right">{row.created_at}</TableCell>
-              <TableCell align="right">{row.author}</TableCell>
+              <TableCell align="left"><a href={row.url}>{row.url}</a></TableCell>
+              <TableCell align="left">{row.created_at}</TableCell>
+              <TableCell align="left">{row.author}</TableCell>
         
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </TableContainer>
+
+    <Dialog
+    open={open}
+    onClose={handleClose}
+    aria-labelledby="alert-dialog-title"
+    aria-describedby="alert-dialog-description"
+    >
+    <DialogTitle id="alert-dialog-title">{"Your Json"}</DialogTitle>
+    <DialogContent>
+      <DialogContentText id="alert-dialog-description">
+        {jsonDataForTheElement}
+      </DialogContentText>
+    </DialogContent>
+    <DialogActions>
+      {/* <Button onClick={handleClose} color="primary">
+        Disagree
+      </Button> */}
+      <Button onClick={handleClose} color="primary" autoFocus>
+        Done
+      </Button>
+    </DialogActions>
+    </Dialog>
+</>
   );
 }
 

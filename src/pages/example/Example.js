@@ -45,6 +45,11 @@ export default function BasicTable() {
     setjsonDataForTheElement(JSON.stringify(apiData[e]))
     setOpen(true,e);
   };
+  function sortCreated (){
+    apiData.sort((a,b)=>(a.created_at>b.created_at)?1:-1)
+    setApiData(apiData)
+    console.log("Done");
+  }
 
   const handleClose = () => {
     setOpen(false);
@@ -109,7 +114,7 @@ export default function BasicTable() {
           
             <TableCell align="center">Title</TableCell>
             <TableCell align="center">URL &nbsp;</TableCell>
-            <span> 
+            <span onClick={sortCreated}> 
               <TableCell align="center">Created at&nbsp;</TableCell>
             </span>
             

@@ -42,27 +42,29 @@ export default function BasicTable() {
   .catch(err=>console.log(err))
         
   }
-  useEffect(() => {
+  // useEffect(() => {
     
-    // const interval = setInterval(() => {
-      getData()
-      console.log(apiData);
+  //   // const interval = setInterval(() => {
+  //     getData()
+  //     console.log(apiData);
       
-  //   }, 5000);
-  //   return () => clearInterval(interval);
+  // //   }, 5000);
+  // //   return () => clearInterval(interval);
 
-  }
-  , []);
+  // }
+  // , []);
+  
  
+  useEffect(() =>{ 
+    getData()
+    setInterval(() => {
+    getData()
+  }, 10000); }, [])
   return (
     
     <TableContainer component={Paper}>
       
-      { 
-      setInterval(() => {
-        getData()
-      }, 10000) 
-    } 
+  
       <Table className={classes.table} aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -76,11 +78,11 @@ export default function BasicTable() {
         <TableBody>
           
           {apiData.map((row) => (
-            <TableRow key={row.url}>
+            <TableRow key={row.url+"yo"+row.created_at}>
               <TableCell component="th" scope="row">
                 {row.title}
               </TableCell>
-              <TableCell align="right"><a href={row.url}>{row.url}</a></TableCell>
+              <TableCell align="right"><a href={row.title}>{row.url}</a></TableCell>
               <TableCell align="right">{row.created_at}</TableCell>
               <TableCell align="right">{row.author}</TableCell>
         

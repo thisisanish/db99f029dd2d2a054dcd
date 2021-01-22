@@ -49,39 +49,57 @@ export default function BasicTable() {
   const handleClose = () => {
     setOpen(false);
   };
-
+  let newData
   function getData(){
     fetch('https://hn.algolia.com/api/v1/search_by_date?tags=story&page=0')
     .then(res=>res.json())
    
-    .then(data=>setApiData(data.hits))
-    .then(()=>console.log(apiData))
-    
-    
-    
+    .then(data=>{
+      setApiData(data.hits)
+      newData = data.hits;
+      // console.log(apiData)
+      // console.log(data.hits)
+      // let difference = apiData
+      //            .filter(x => !data.hits.includes(x))
+      //            .concat(data.hits.filter(x => !apiData.includes(x)));
+      // // console.log(difference); 
+      let apiDataArray = apiData
+      apiDataArray.push(difference)
+      setApiData(data.hits)
+      console.log(apiData)
+      console.log(apiDataArray)
+
+     })
+
   .catch(err=>console.log(err))
         
   }
-  // useEffect(() => {
-    
-  //   // const interval = setInterval(() => {
-  //     getData()
-  //     console.log(apiData);
-      
-  // //   }, 5000);
-  // //   return () => clearInterval(interval);
+  useEffect(()=>{
+    getData()
+  },[])
 
-  // }
-  // , []);
+
+  useEffect(() => {
+    
+    const interval = setInterval(() => {
+      getData()
+      console.log(apiData);
+      
+    }, 10000);
+    return () => clearInterval(interval);
+
+  }
+  , []);
   
  
-  useEffect(() =>{ 
-    getData()
-    setInterval(() => {
-    getData()
-  }, 10000); }, [])
+  // useEffect(() =>{ 
+  //   getData()
+  //   setInterval(() => {
+  //   getData()
+  // }, 10000); }, [])
   return (
   <>
+  {console.log(apiData)}
     <TableContainer component={Paper}>
       
   
@@ -91,17 +109,21 @@ export default function BasicTable() {
           
             <TableCell align="center">Title</TableCell>
             <TableCell align="center">URL &nbsp;</TableCell>
-            <TableCell align="center">Created at&nbsp;</TableCell>
+            <span> 
+              <TableCell align="center">Created at&nbsp;</TableCell>
+            </span>
+            
             <TableCell align="center">Author&nbsp;</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           
-          {apiData.map((row,index) => (
-            <TableRow key={row.url+"yo"+row.created_at} onClick={e=>handleClickOpen(index)}>
+          {apiData.map((row,index) => !row?none:(
+            
+            <TableRow key={index} onClick={e=>handleClickOpen(index)}>
               <TableCell component="th" scope="row">
                 {row.title}
-              </TableCell>
+              </TableCell>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
               <TableCell align="left"><a href={row.url}>{row.url}</a></TableCell>
               <TableCell align="left">{row.created_at}</TableCell>
               <TableCell align="left">{row.author}</TableCell>
